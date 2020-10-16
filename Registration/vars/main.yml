@@ -1,5 +1,5 @@
 ---
 # vars file for Registration
-Satellite_Hostname: vm255-36.gsslab.pnq2.redhat.com
+Satellite_Hostname: 
 Activation_Key: Testing-ansible
 Organization_ID: redhat
