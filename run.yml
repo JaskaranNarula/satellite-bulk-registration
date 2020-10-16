@@ -1,0 +1,4 @@
+---
+ - hosts: vm254-255.gsslab.pnq2.redhat.com
+   roles:
+     - Registration

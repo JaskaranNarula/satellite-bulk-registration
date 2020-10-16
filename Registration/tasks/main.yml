@@ -1,0 +1,43 @@
+---
+# tasks file for Bulk Host Registration
+- name: Unregistering the system 
+  redhat_subscription:
+    state: absent 
+
+- name: Cleaning the all packages
+  yum:
+    name: katello-ca-consumer
+    state: absent 
+
+- name: Using Curl Downloading the Katello-ca-consumer package to Register the system. 
+  shell: curl --insecure --output katello-ca-consumer-latest.noarch.rpm "https://{{ Satellite_Hostname }}/pub/katello-ca-consumer-latest.noarch.rpm" 
+  shell: yum localinstall katello-ca-consumer-latest.noarch.rpm -y  
+
+- name: Register the Hosts to the Red Hat Satellite 6 using Activation Key
+  redhat_subscription:
+    state: present
+    activationkey: "{{ Activation_Key }}" 
+    org_id: "{{ Organization_ID }}" 
+
+- name: Installing the Mandatory packages for the client system. 
+  yum: 
+    name: "{{ Packages }}"
+  vars:
+    Packages:
+      - katello-host-tools
+      - katello-host-tools-tracer
+      - katello-agent
+
+- name: Sharing the SSH Keys for Foreman-proxy user
+  vars:
+    SSH_Key_Foreman_Proxy: "{{ loopup('id_rsa_foreman_proxy.pub', /usr/share/foreman-proxy/.ssh)'}}"
+  tasks: 
+  - name: The SSH keys are moving to the client systems. 
+    copy:
+      contnet: {{ SSH_Key_Foreman_Proxy }} 
+      dest: ~/.ssh/authorized_keys
+    - debug:
+      msg: "The Value of the variable is {{ SSH_Key_Foreman_Proxy }}" 
+
+
+
