@@ -1,9 +1,0 @@
----
-- hosts: all
-  gather_facts: no 
-  vars_prompt:
-    - name: password
-      prompt: Please enter the password for root user
-      private: no
-  roles:
-    - Registration
