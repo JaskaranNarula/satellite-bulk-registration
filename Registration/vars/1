@@ -1,0 +1,8 @@
+---
+# vars file for Registration
+Satellite_Hostname: janarula-rhsat.syslab.pnq2.redhat.com 
+Activation_Key: Testing-ansible
+Organization_ID: redhat
+pubkey: /root/foreman_proxy.pub
+username: root
+target-host: 10.74.130.245 

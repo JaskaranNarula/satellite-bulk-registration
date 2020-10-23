@@ -1,19 +1,5 @@
 ---
 # tasks file for Bulk Host Registration
-#- name:
-#  shell: 'curl https://"{{ Satellite_Hostname }}":9090/ssh/pubkey >> /root/.ssh/authorized_keys'
-# shell: 'echo "{{ password }}" | ssh-copy-id -i "{{ pubkey }}"  "{{username}}"@"{{ ansible_host }}" --stdin'
-
-- name: make direcotry
-  file:
-    path: '/"{{ username }}"/.ssh'
-    state: directory
-
-- name: create empty file
-  file:
-    path: '/"{{ username }}"/.ssh/authorized_keys'
-    state: touch
-
 - name: Unregistering the system 
   redhat_subscription:
     state: absent 
@@ -24,15 +10,14 @@
     state: absent 
 
 - name: Using Curl Downloading the Katello-ca-consumer package to Register the system. 
-#  shell: curl --insecure --output katello-ca-consumer-latest.noarch.rpm "https://{{ Satellite_Hostname }}/pub/katello-ca-consumer-latest.noarch.rpm" 
-#  shell: yum localinstall katello-ca-consumer-latest.noarch.rpm -y  
-  shell: 'rpm -Uvh http://"{{ Satellite_Hostname }}"/pub/katello-ca-consumer-latest.noarch.rpm --force'
+  shell: curl --insecure --output katello-ca-consumer-latest.noarch.rpm "https://{{ Satellite_Hostname }}/pub/katello-ca-consumer-latest.noarch.rpm" 
+  shell: yum localinstall katello-ca-consumer-latest.noarch.rpm -y  
 
 - name: Register the Hosts to the Red Hat Satellite 6 using Activation Key
   redhat_subscription:
-    activationkey: "new"
-    org_id: "RedHat" 
     state: present
+    activationkey: "{{ Activation_Key }}" 
+    org_id: "{{ Organization_ID }}" 
 
 - name: Installing the Mandatory packages for the client system. 
   yum: 
@@ -54,9 +39,17 @@
 #    - debug:
 #      msg: "The Value of the variable is {{ SSH_Key_Foreman_Proxy }}" 
 
+- name: make direcotry
+  file:
+    path: "/home/<username>/.ssh"
+    state: directory
+- name: create empty file
+  file:
+    path: "/home/<username>/.ssh/authorized_keys"
+    state: touch
 - name: put pubkey
   lineinfile:
-    path: "/root/.ssh/authorized_keys"
+    path: "/home/<username>/.ssh/authorized_keys"
     line: "{{ pubkey }}"
 
 
