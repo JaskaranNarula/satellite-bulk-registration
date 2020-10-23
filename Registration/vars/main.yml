@@ -1,8 +1,8 @@
 ---
 # vars file for Registration
-Satellite_Hostname:  
-Activation_Key: 1
-Organization_ID: 1
-username: root
-target-host: 
-pubkey: 
+#Satellite_Hostname: 
+#Activation_Key: 
+#Organization_ID: 
+#username: root
+#pubkey
+#target-host: 

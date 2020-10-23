@@ -1,0 +1,27 @@
+---
+- hosts: all
+  gather_facts: no
+  vars_prompt:
+    - name: username
+      prompt: Please enter the username that you want to use.
+      private: no
+    - name: password
+      prompt: Please enter the password for root user
+      private: no
+    - name: Satellite_Hostname
+      prompt: Please enter Satellite hostname
+      private: no
+    - name: Activation_Key
+      prompt: Please enter the Activation Key.
+      private: no
+    - name: Organization_ID
+      prompt: Please enter the Organization Name under which you want to register the client system.
+      private: no
+    - name: pubkey
+      prompt: Please share the public key for the FOREMAN-PROXY user.
+      private: no
+    - name: host-name
+      prompt: Please enter the Target host(s).
+      private: no
+  roles:
+    - Registration

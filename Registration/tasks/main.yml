@@ -1,37 +1,33 @@
 ---
 # tasks file for Bulk Host Registration
-#- name:
-#  shell: 'curl https://"{{ Satellite_Hostname }}":9090/ssh/pubkey >> /root/.ssh/authorized_keys'
-# shell: 'echo "{{ password }}" | ssh-copy-id -i "{{ pubkey }}"  "{{username}}"@"{{ ansible_host }}" --stdin'
-
-- name: make direcotry
+- name: Making directory to past the public key for the user "{{ username }}".
   file:
     path: '/"{{ username }}"/.ssh'
     state: directory
 
-- name: create empty file
+- name: Create empty file if the file does not exsist. 
   file:
     path: '/"{{ username }}"/.ssh/authorized_keys'
     state: touch
 
-- name: Unregistering the system 
+- name: Unregistering the system if it is registered anywhere else.
   redhat_subscription:
     state: absent 
 
-- name: Cleaning the all packages
+- name: Cleaning the all packages in case if there are any old packages of katello-ca-consumer present.
   yum:
     name: katello-ca-consumer
     state: absent 
 
-- name: Using Curl Downloading the Katello-ca-consumer package to Register the system. 
-#  shell: curl --insecure --output katello-ca-consumer-latest.noarch.rpm "https://{{ Satellite_Hostname }}/pub/katello-ca-consumer-latest.noarch.rpm" 
-#  shell: yum localinstall katello-ca-consumer-latest.noarch.rpm -y  
+- name: Downloading the Katello-ca-consumer package from "{{ Satellite_Hostname }}" to register the system. 
   shell: 'rpm -Uvh http://"{{ Satellite_Hostname }}"/pub/katello-ca-consumer-latest.noarch.rpm --force'
+  args:
+    warn: false
 
-- name: Register the Hosts to the Red Hat Satellite 6 using Activation Key
+- name: Register the Hosts to the "{{ Satellite_Hostname }}" using Activation Key.
   redhat_subscription:
-    activationkey: "new"
-    org_id: "RedHat" 
+    activationkey: "{{ Activation_Key }}"
+    org_id: "{{ Organization_ID }}" 
     state: present
 
 - name: Installing the Mandatory packages for the client system. 
@@ -43,20 +39,7 @@
       - katello-host-tools-tracer
       - katello-agent
 
-#- name: Sharing the SSH Keys for Foreman-proxy user
-#  vars:
-#    SSH_Key_Foreman_Proxy: "{{ loopup('id_rsa_foreman_proxy.pub', /usr/share/foreman-proxy/.ssh)'}}"
-#  tasks: 
-#  - name: The SSH keys are moving to the client systems. 
-#    copy:
-#      contnet: {{ SSH_Key_Foreman_Proxy }} 
-#      dest: ~/.ssh/authorized_keys
-#    - debug:
-#      msg: "The Value of the variable is {{ SSH_Key_Foreman_Proxy }}" 
-
-- name: put pubkey
+- name: Sharing the public key of foreman-proxy user  on the hosts.
   lineinfile:
     path: "/root/.ssh/authorized_keys"
     line: "{{ pubkey }}"
-
-
