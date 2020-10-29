@@ -16,6 +16,15 @@ During the development, it will be considered that all the hosts will have "root
  
  - Variables: 
   > There are a few inputs that you need to mention before you run the role. Based on the variables the roles will run. 
+  
+  - Permissions: 
+  > You can run this role with 2 users.
+
+  [1] Root User 
+
+  [2] Non-Root User
+   
+   > As of now we are trying to work with Root user and in near future we are planning it to run with non-root user as well. 
 
 - Author Information
 
